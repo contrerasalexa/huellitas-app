@@ -1,9 +1,7 @@
-// App.js
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoginScreen from './src/components/LoginScreen';
-import RegisterScreen from './src/components/RegisterScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import LoginScreen from '../huellitas-app/src/components/LoginScreen';
+import BottomTabs from '../huellitas-app/src/components/BottomTabs';
 
 const Stack = createStackNavigator();
 
@@ -12,7 +10,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="BottomTabs" component={BottomTabs} />
       </Stack.Navigator>
     </NavigationContainer>
   );
