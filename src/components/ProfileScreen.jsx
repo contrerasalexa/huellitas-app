@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import { auth, db } from '../utils/firebase'; // Ajusta la ruta según tu proyecto
+import { auth, db } from '../utils/firebase'; 
 import { doc, getDoc } from 'firebase/firestore';
 
 const ProfileScreen = ({ navigation, route }) => {
@@ -11,7 +11,7 @@ const ProfileScreen = ({ navigation, route }) => {
     const fetchUserData = async () => {
       try {
         const user = auth.currentUser;
-        const userDoc = await getDoc(doc(db, 'users', user.uid)); // Obtén los datos desde Firestore
+        const userDoc = await getDoc(doc(db, 'users', user.uid)); 
         if (userDoc.exists()) {
           setUserData(userDoc.data());
         } else {
@@ -30,7 +30,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      navigation.replace('Login'); // Redirige al login tras cerrar sesión
+      navigation.replace('Login'); 
     } catch (error) {
       alert('Error al cerrar sesión: ' + error.message);
     }

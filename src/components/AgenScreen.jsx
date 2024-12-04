@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Button, Alert, Platform } from 'react-native';
 import { collection, query, where, onSnapshot, addDoc } from 'firebase/firestore';
-import { db, auth } from '../utils/firebase'; // Asegúrate de importar correctamente Firebase
+import { db, auth } from '../utils/firebase';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 function AgenScreen() {
@@ -10,13 +10,13 @@ function AgenScreen() {
   const [formData, setFormData] = useState({
     fecha: '',
     hora: '',
-  }); // Datos del formulario
+  });
   const [loading, setLoading] = useState(true);
-  const [showDatePicker, setShowDatePicker] = useState(false); // Mostrar selector de fecha
-  const [showTimePicker, setShowTimePicker] = useState(false); // Mostrar selector de hora
+  const [showDatePicker, setShowDatePicker] = useState(false); 
+  const [showTimePicker, setShowTimePicker] = useState(false); 
 
   useEffect(() => {
-    const userId = auth.currentUser?.uid; // ID del usuario loggeado
+    const userId = auth.currentUser?.uid; 
     if (!userId) {
       console.error('Usuario no autenticado.');
       setLoading(false);
@@ -44,16 +44,13 @@ function AgenScreen() {
       }
     );
 
-    // Limpiar la suscripción al desmontar el componente
     return () => unsubscribe();
   }, []);
 
-  // Cambios en los campos del formulario
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Guardar en Firebase
   const handleSave = async () => {
     const { fecha, hora } = formData;
 
@@ -68,7 +65,7 @@ function AgenScreen() {
         mascotaNombre: selectedMascota.nombre,
         fecha,
         hora,
-        estado: 'Pendiente', // Estado predeterminado
+        estado: 'Pendiente', 
         fechaRegistro: new Date(),
       });
 
@@ -81,7 +78,6 @@ function AgenScreen() {
     }
   };
 
-  // Mostrar DatePicker y manejar fecha seleccionada
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
@@ -90,26 +86,24 @@ function AgenScreen() {
     }
   };
 
-  // Mostrar TimePicker y manejar hora seleccionada
   const handleTimeChange = (event, selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) {
       const formattedTime = selectedTime.toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit',
-        hour12: true, // Formato 12 horas
+        hour12: true, 
       });
       handleChange('hora', formattedTime);
     }
   };
 
-  // Renderizar cada mascota en la lista
   const renderItem = ({ item }) => (
     <View style={styles.itemRow}>
       <Text style={styles.itemText}>{item.nombre}</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => setSelectedMascota(item)} // Seleccionar mascota
+        onPress={() => setSelectedMascota(item)}
       >
         <Text style={styles.buttonText}>Agendar</Text>
       </TouchableOpacity>
@@ -120,7 +114,7 @@ function AgenScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Agendar Citas</Text>
 
-      {/* Lista de mascotas */}
+      { }
       {loading ? (
         <Text style={styles.loadingText}>Cargando mascotas...</Text>
       ) : (
@@ -132,7 +126,7 @@ function AgenScreen() {
         />
       )}
 
-      {/* Agendar citas */}
+      { }
       {selectedMascota && (
         <View style={styles.form}>
           <Text style={styles.subtitle}>Agendar para {selectedMascota.nombre}</Text>
@@ -157,7 +151,7 @@ function AgenScreen() {
           value={new Date()}
           mode="date"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          minimumDate={new Date()} // Solo permite fechas futuras
+          minimumDate={new Date()}
           onChange={handleDateChange}
         />
       )}
@@ -167,7 +161,7 @@ function AgenScreen() {
           value={new Date()}
           mode="time"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          is24Hour={false} // Formato 12 horas
+          is24Hour={false}
           onChange={handleTimeChange}
         />
       )}

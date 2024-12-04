@@ -7,7 +7,6 @@ import MisMascotasScreen from './MisMascotasScreen';
 import ProfileScreen from './ProfileScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// Configuración del BottomTabNavigator
 const BottomTab = createBottomTabNavigator();
 
 const Dueño = () => {
@@ -16,8 +15,8 @@ const Dueño = () => {
       screenOptions={{
         headerShown: true,
         tabBarStyle: { backgroundColor: '#eee' },
-        tabBarActiveTintColor: '#0056D2', // Color para el ícono activo
-        tabBarInactiveTintColor: '#555', // Color para íconos inactivos
+        tabBarActiveTintColor: '#0056D2',
+        tabBarInactiveTintColor: '#555', 
       }}
     >
       <BottomTab.Screen 

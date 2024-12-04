@@ -3,18 +3,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Agenda from '../screens/Agenda';
 import Citas from '../screens/Citas';
 import Historial from '../screens/Historial';
-import ProfileScreen from './ProfileScreen'; // Nueva pantalla para perfil
+import ProfileScreen from './ProfileScreen'; 
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabs({ route }) {
-  const { userName } = route.params || { userName: 'Paseador' }; // Toma el nombre del paseador desde los parámetros
-
+  const { userName } = route.params || { userName: 'Paseador' }; 
   return (
     <BottomTab.Navigator
       screenOptions={({ route }) => ({
-        headerLeft: () => null, // Esto elimina la flecha de "volver"
         headerTitleAlign: 'center',
         headerShown: false,
         tabBarStyle: { backgroundColor: '#eee' },
@@ -36,7 +34,7 @@ export default function BottomTabs({ route }) {
       <BottomTab.Screen
         name="Profile"
         component={ProfileScreen}
-        initialParams={{ role: 'PASEADOR' }} // Pasa el rol aquí; ajusta dinámicamente en el login
+        initialParams={{ role: 'PASEADOR' }}
       />
     </BottomTab.Navigator>
 

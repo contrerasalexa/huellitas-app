@@ -12,7 +12,7 @@ export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthDate, setBirthDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false); // Estado para mostrar u ocultar el DatePicker
+  const [showDatePicker, setShowDatePicker] = useState(false); 
   const [occupation, setOccupation] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
@@ -29,15 +29,14 @@ export default function RegisterScreen({ navigation }) {
   
       const userData = {
         email,
-        role: role === 'DUENIO' ? 'DUENIO' : 'PASEADOR', // Siempre se guarda como 'PASEADOR'
+        role: role === 'DUENIO' ? 'DUENIO' : 'PASEADOR',
         name,
         lastName,
-        birthDate: birthDate.toISOString().split('T')[0], // Formato de fecha: YYYY-MM-DD
+        birthDate: birthDate.toISOString().split('T')[0], 
         address,
         phone,
       };
   
-      // Solo agregar "occupation" si el rol es "PASEADOR"
       if (role === 'PASEADOR') {
         userData.occupation = occupation;
       }
@@ -52,9 +51,9 @@ export default function RegisterScreen({ navigation }) {
   
 
   const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false); // Oculta el DatePicker después de seleccionar
+    setShowDatePicker(false); 
     if (selectedDate) {
-      setBirthDate(selectedDate); // Actualiza la fecha seleccionada
+      setBirthDate(selectedDate);
     }
   };
 
@@ -102,7 +101,7 @@ export default function RegisterScreen({ navigation }) {
           <TextInput style={styles.input} placeholder="Nombre" value={name} onChangeText={setName} />
           <TextInput style={styles.input} placeholder="Apellido Paterno" value={lastName} onChangeText={setLastName} />
 
-          {/* Selector de Fecha */}
+          {}
           <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
             <Text style={styles.datePickerText}>
               {`Fecha de Nacimiento: ${birthDate.toLocaleDateString()}`}
@@ -115,7 +114,7 @@ export default function RegisterScreen({ navigation }) {
               mode="date"
               display={Platform.OS === 'ios' ? 'spinner' : 'default'}
               onChange={handleDateChange}
-              maximumDate={new Date()} // No permite fechas futuras
+              maximumDate={new Date()}
             />
           )}
 

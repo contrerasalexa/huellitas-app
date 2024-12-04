@@ -11,7 +11,7 @@ export default function RegisScreen() {
   const [peso, setPeso] = useState('');
 
   const handleRegistrarMascota = async () => {
-    const userId = auth.currentUser.uid; // Obtener el ID del usuario actual
+    const userId = auth.currentUser.uid;
 
     if (!nombre || !especie || !raza || !edad || !peso) {
       alert('Por favor completa todos los campos');
@@ -25,7 +25,7 @@ export default function RegisScreen() {
         raza,
         edad: parseInt(edad),
         peso: parseFloat(peso),
-        id_dueño: `/users/${userId}`, // Asociar la mascota al usuario actual
+        id_dueño: `/users/${userId}`,
         fechaRegistro: new Date().toISOString(),
       });
       alert('Mascota registrada exitosamente');

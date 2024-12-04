@@ -53,7 +53,7 @@ function ReporScreen() {
         <Text style={styles.headerCell}>Peso</Text>
       </View>
 
-      {/* Lista de mascotas */}
+      {}
       {loading ? (
         <Text style={styles.loadingText}>Cargando mascotas...</Text>
       ) : (

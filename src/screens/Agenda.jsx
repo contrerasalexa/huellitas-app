@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, Image, Alert } from 'react-native';
 import { collection, getDocs, doc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth'; 
 import { db } from '../utils/firebase'; 
 
 export default function Agenda() {
-  const [data, setData] = useState([]); 
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true); 
+
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
 
   const fetchCitasConMascotas = async () => {
     try {
-      // obtener todas las citas
       const citasSnapshot = await getDocs(collection(db, 'citas'));
       const citas = citasSnapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() })) 
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
         .filter((cita) => cita.estado === 'Pendiente'); 
-        
+
       const dataCombinada = await Promise.all(
         citas.map(async (cita) => {
           const mascotaRef = doc(db, 'mascotas', cita.mascotaId); 
@@ -23,8 +26,8 @@ export default function Agenda() {
           if (mascotaSnapshot.exists()) {
             const mascotaData = mascotaSnapshot.data();
             return {
-              ...cita,
-              ...mascotaData,
+              ...cita, 
+              ...mascotaData, 
             };
           }
           return cita; 
@@ -39,32 +42,34 @@ export default function Agenda() {
     }
   };
 
-
   useEffect(() => {
     fetchCitasConMascotas();
   }, []);
 
   const handleSolicitud = async (item) => {
+    if (!currentUser) {
+      Alert.alert('Error', 'No se pudo identificar al usuario en sesión.');
+      return;
+    }
+
     try {
-      // actualizar el estado en base
       const citaRef = doc(db, 'citas', item.id);
       await updateDoc(citaRef, { estado: 'Iniciar' });
 
-      //Coleccion de cidados 
       const cuidado = {
         mascotaId: item.mascotaId, 
         mascotaNombre: item.nombre, 
         fecha: item.fecha, 
         hora: item.hora, 
-        estado: 'Pendiente',
-        horaInicio: '', 
+        estado: 'Pendiente', 
+        horaInicio: '',
         horaFin: '', 
+        usuarioId: currentUser.uid, 
       };
 
-      await addDoc(collection(db, 'cuidados'), cuidado); 
+      await addDoc(collection(db, 'cuidados'), cuidado); // Agregar el documento
       Alert.alert('Solicitud Registrada', `El cuidado de ${item.nombre} ha sido registrado.`);
-
-      fetchCitasConMascotas();
+      fetchCitasConMascotas(); 
     } catch (error) {
       console.error('Error al registrar el cuidado:', error);
       Alert.alert('Error', 'No se pudo registrar el cuidado.');
@@ -73,23 +78,15 @@ export default function Agenda() {
 
   const renderCard = ({ item }) => (
     <View style={styles.card}>
-      <Image
-        source={require('../assets/mascotas1.png')} 
-        style={styles.image}
-      />
+      <Image source={require('../assets/mascotas1.png')} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.name}>Nombre: {item.nombre}</Text>
         <Text style={styles.text}>Especie: {item.especie}</Text>
         <Text style={styles.text}>Raza: {item.raza}</Text>
-        <Text style={styles.text}>Edad: {item.edad}</Text>
-        <Text style={styles.text}>Peso: {item.peso} kg</Text>
         <Text style={styles.text}>Fecha: {item.fecha}</Text>
         <Text style={styles.text}>Hora: {item.hora}</Text>
       </View>
-      <TouchableOpacity
-        style={styles.cardButton}
-        onPress={() => handleSolicitud(item)}
-      >
+      <TouchableOpacity style={styles.cardButton} onPress={() => handleSolicitud(item)}>
         <Text style={styles.cardButtonText}>Solicitar Cuidado</Text>
       </TouchableOpacity>
     </View>
@@ -125,7 +122,6 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: 'blue',
     textAlign: 'center',
-    marginTop:30,
     marginBottom: 20,
   },
   loading: {
@@ -139,12 +135,10 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 250,
-    height: '70%',
     backgroundColor: '#fff',
-    marginTop:30,
     borderRadius: 10,
-    marginRight: 15,
     padding: 15,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -175,7 +169,6 @@ const styles = StyleSheet.create({
   cardButton: {
     backgroundColor: '#0056D2',
     paddingVertical: 10,
-    paddingHorizontal: 20,
     borderRadius: 5,
     marginTop: 10,
     alignSelf: 'center',

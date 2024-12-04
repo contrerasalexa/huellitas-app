@@ -1,5 +1,5 @@
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from './firebase'; // Asegúrate de que esta ruta apunte a tu configuración de Firebase
+import { db } from './firebase'; 
 
 export const fetchMascotasForDuenio = async (duenioId) => {
   const mascotasRef = collection(db, 'mascotas');

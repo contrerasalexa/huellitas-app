@@ -1,35 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, doc, updateDoc, onSnapshot, query, where } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import { db } from '../utils/firebase'; 
 
 export default function Citas() {
   const [cuidados, setCuidados] = useState([]); 
   const [loading, setLoading] = useState(true); 
+  const auth = getAuth(); 
+  const currentUser = auth.currentUser; 
 
-  //Datos de cuidados
-  const fetchCuidados = async () => {
+  const listenToCuidados = () => {
+    if (!currentUser) {
+      Alert.alert('Error', 'No se pudo identificar al usuario en sesión.');
+      return;
+    }
+
     try {
-      const cuidadosSnapshot = await getDocs(collection(db, 'cuidados'));
-      const data = cuidadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setCuidados(data);
-      setLoading(false);
+      const cuidadosQuery = query(
+        collection(db, 'cuidados'),
+        where('usuarioId', '==', currentUser.uid) 
+      );
+
+      
+      const unsubscribe = onSnapshot(cuidadosQuery, (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setCuidados(data);
+        setLoading(false);
+      });
+
+      return unsubscribe; 
     } catch (error) {
-      console.error('Error al cargar los cuidados:', error);
-      Alert.alert('Error', 'No se pudieron cargar los datos.');
+      console.error('Error al configurar el listener:', error);
+      Alert.alert('Error', 'No se pudo configurar la actualización en tiempo real.');
     }
   };
 
+  
   useEffect(() => {
-    fetchCuidados();
+    const unsubscribe = listenToCuidados(); 
+    return () => {
+      if (unsubscribe) {
+        unsubscribe(); 
+      }
+    };
   }, []);
 
   const actualizarCuidado = async (id, cambios, mensaje) => {
     try {
-      const cuidadoRef = doc(db, 'cuidados', id);
-      await updateDoc(cuidadoRef, cambios);
+      const cuidadoRef = doc(db, 'cuidados', id); 
+      await updateDoc(cuidadoRef, cambios); 
       Alert.alert('Actualización Exitosa', mensaje);
-      fetchCuidados(); 
     } catch (error) {
       console.error('Error al actualizar el cuidado:', error);
       Alert.alert('Error', 'No se pudo actualizar el estado del cuidado.');
@@ -37,14 +58,13 @@ export default function Citas() {
   };
 
   const renderCuidado = ({ item }) => {
-    // Cambiar el color del fondo dependiendo del estado
     const backgroundColor =
       item.estado === 'Cancelado'
-        ? '#F8D7DA' // Rojo 
+        ? '#F8D7DA' 
         : item.estado === 'Finalizado'
-        ? '#D4EDDA' // Verde 
+        ? '#D4EDDA' 
         : item.estado === 'Iniciado'
-        ? '#FFF3CD' // Amarillo 
+        ? '#FFF3CD' 
         : '#FFFFFF';
 
     return (
@@ -59,13 +79,12 @@ export default function Citas() {
         </View>
 
         <View style={styles.buttonsContainer}>
-          
           <TouchableOpacity
             style={[styles.button, styles.cancelButton]}
             onPress={() =>
               actualizarCuidado(item.id, { estado: 'Cancelado' }, 'El cuidado ha sido cancelado.')
             }
-            disabled={item.estado !== 'Pendiente'} 
+            disabled={item.estado !== 'Pendiente'}
           >
             <Text style={styles.buttonText}>Cancelar</Text>
           </TouchableOpacity>
@@ -79,7 +98,7 @@ export default function Citas() {
                 'El cuidado ha sido iniciado.'
               )
             }
-            disabled={item.estado !== 'Pendiente'} 
+            disabled={item.estado !== 'Pendiente'}
           >
             <Text style={styles.buttonText}>Iniciar</Text>
           </TouchableOpacity>
@@ -93,7 +112,7 @@ export default function Citas() {
                 'El cuidado ha sido finalizado.'
               )
             }
-            disabled={item.estado !== 'Iniciado'} 
+            disabled={item.estado !== 'Iniciado'}
           >
             <Text style={styles.buttonText}>Finalizar</Text>
           </TouchableOpacity>

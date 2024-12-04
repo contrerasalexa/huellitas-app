@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Alert } from 'react-native';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { db } from '../utils/firebase';
+import { getAuth } from 'firebase/auth';
+import { db } from '../utils/firebase'; 
 
 export default function Historial() {
-  const [citas, setCitas] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+  const [citas, setCitas] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
   useEffect(() => {
+    if (!currentUser) {
+      Alert.alert('Error', 'No se pudo identificar al usuario en sesión.');
+      setLoading(false);
+      return;
+    }
     const citasQuery = query(
       collection(db, 'cuidados'),
-      where('estado', '==', 'Finalizado') // Filtrar solo las citas finalizadas
+      where('estado', '==', 'Finalizado'), 
+      where('usuarioId', '==', currentUser.uid) 
     );
 
     const unsubscribe = onSnapshot(
@@ -20,7 +28,7 @@ export default function Historial() {
           id: doc.id,
           ...doc.data(),
         }));
-        setCitas(citasFinalizadas);
+        setCitas(citasFinalizadas); 
         setLoading(false);
       },
       (error) => {
@@ -29,8 +37,6 @@ export default function Historial() {
         setLoading(false);
       }
     );
-
-    // Limpiar la suscripción al desmontar el componente
     return () => unsubscribe();
   }, []);
 

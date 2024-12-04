@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { collection, query, where, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db, auth } from '../utils/firebase'; // Incluye la autenticación
+import { db, auth } from '../utils/firebase'; 
 
 function ModifScreen() {
   const [mascotas, setMascotas] = useState([]);
@@ -11,7 +11,7 @@ function ModifScreen() {
 
   useEffect(() => {
     const cargarMascotas = () => {
-      const userId = auth.currentUser?.uid; // ID del usuario loggeado
+      const userId = auth.currentUser?.uid;
       if (!userId) {
         Alert.alert('Error', 'Usuario no identificado.');
         setLoading(false);

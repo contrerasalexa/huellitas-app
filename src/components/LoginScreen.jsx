@@ -13,17 +13,15 @@ export default function LoginScreen({ navigation }) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const userId = userCredential.user.uid;
 
-      // Recuperar el rol del usuario desde Firestore
       const userDoc = await getDoc(doc(db, 'users', userId));
       if (userDoc.exists()) {
         const userData = userDoc.data();
         const userRole = userData.role;
 
-        // Redirigir según el rol
         if (userRole === 'PASEADOR') {
-          navigation.navigate('BottomTabs'); // Redirigir al menú del paseador
+          navigation.navigate('BottomTabs');
         } else if (userRole === 'DUENIO') {
-          navigation.navigate('Dueño'); // Redirigir al menú del dueño
+          navigation.navigate('Dueño'); 
         } else {
           alert('Rol no reconocido. Comuníquese con el administrador.');
         }
@@ -92,6 +90,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   buttonContainer: {
-    marginBottom: 15, // Espaciado entre los botones
+    marginBottom: 15, 
   },
 });
