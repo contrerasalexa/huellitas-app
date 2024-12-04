@@ -22,7 +22,10 @@ export default function LoginScreen({ navigation }) {
         // Redirigir según el rol
         if (userRole === 'PASEADOR') {
           navigation.navigate('BottomTabs'); // Redirigir al menú del paseador
-        } else {
+        } else if(userRole === 'DUENIO') {
+          navigation.navigate('Dueño'); // Redirigir al menú del paseador
+        }
+         else {
           alert('Rol no reconocido. Comuníquese con el administrador.');
         }
       } else {

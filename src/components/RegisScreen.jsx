@@ -1,27 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { auth, db } from '../utils/firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../../utils/firebase'; 
-import Icon from 'react-native-vector-icons/FontAwesome'; 
 
-function RegisScreen() {
-  const [formData, setFormData] = useState({
-    nombre: '',
-    especie: '',
-    raza: '',
-    edad: '',
-    peso: '',
-  });
+export default function RegisScreen() {
+  const [nombre, setNombre] = useState('');
+  const [especie, setEspecie] = useState('');
+  const [raza, setRaza] = useState('');
+  const [edad, setEdad] = useState('');
+  const [peso, setPeso] = useState('');
 
-  const handleChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async () => {
-    const { nombre, especie, raza, edad, peso } = formData;
+  const handleRegistrarMascota = async () => {
+    const userId = auth.currentUser.uid; // Obtener el ID del usuario actual
 
     if (!nombre || !especie || !raza || !edad || !peso) {
-      Alert.alert('Error', 'Por favor, llena todos los campos.');
+      alert('Por favor completa todos los campos');
       return;
     }
 
@@ -32,136 +25,78 @@ function RegisScreen() {
         raza,
         edad: parseInt(edad),
         peso: parseFloat(peso),
-        fechaRegistro: new Date(),
+        id_dueño: `/users/${userId}`, // Asociar la mascota al usuario actual
+        fechaRegistro: new Date().toISOString(),
       });
-
-      Alert.alert('Registro Exitoso', `Mascota ${nombre} registrada correctamente.`);
-      setFormData({
-        nombre: '',
-        especie: '',
-        raza: '',
-        edad: '',
-        peso: '',
-      });
+      alert('Mascota registrada exitosamente');
+      setNombre('');
+      setEspecie('');
+      setRaza('');
+      setEdad('');
+      setPeso('');
     } catch (error) {
-      Alert.alert('Error', 'No se pudo guardar la mascota en Firebase.');
-      console.error('Error al guardar en Firebase:', error);
+      console.error('Error al registrar la mascota:', error);
+      alert('Error al registrar la mascota');
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Título */}
       <Text style={styles.title}>Registrar Mascota</Text>
-  
-      
-      <View style={styles.iconContainer}>
-        <Icon name="paw" size={90} color="#4ee9e7" />
-      </View>
-  
-      //llenar formulario 
       <TextInput
         style={styles.input}
         placeholder="Nombre"
-        placeholderTextColor="#666"
-        value={formData.nombre}
-        onChangeText={(text) => handleChange('nombre', text)}
+        value={nombre}
+        onChangeText={setNombre}
       />
       <TextInput
         style={styles.input}
         placeholder="Especie"
-        placeholderTextColor="#666"
-        value={formData.especie}
-        onChangeText={(text) => handleChange('especie', text)}
+        value={especie}
+        onChangeText={setEspecie}
       />
       <TextInput
         style={styles.input}
         placeholder="Raza"
-        placeholderTextColor="#666"
-        value={formData.raza}
-        onChangeText={(text) => handleChange('raza', text)}
+        value={raza}
+        onChangeText={setRaza}
       />
       <TextInput
         style={styles.input}
         placeholder="Edad"
+        value={edad}
         keyboardType="numeric"
-        placeholderTextColor="#666"
-        value={formData.edad}
-        onChangeText={(text) => handleChange('edad', text)}
+        onChangeText={setEdad}
       />
       <TextInput
         style={styles.input}
-        placeholder="Peso (kg)"
+        placeholder="Peso"
+        value={peso}
         keyboardType="numeric"
-        placeholderTextColor="#666"
-        value={formData.peso}
-        onChangeText={(text) => handleChange('peso', text)}
+        onChangeText={setPeso}
       />
-  
-     
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Registrar Mascota</Text>
-        </TouchableOpacity>
-      </View>
+      <Button title="Registrar" onPress={handleRegistrarMascota} />
     </View>
   );
-  
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#201b6f',
+    marginBottom: 20,
     textAlign: 'center',
-    marginBottom: 10,
   },
   input: {
-    height: 50,
-    backgroundColor: '#fff',
-    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ddd',
-    paddingHorizontal: 15,
-    fontSize: 16,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2, 
-  },
-  buttonContainer: {
-    alignItems: 'center', 
-    marginTop: 20, 
-  },
-  button: {
-    backgroundColor: '#1F91DC',
-    paddingVertical: 15,
-    paddingHorizontal: 50, 
-    borderRadius: 10,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 3, 
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  iconContainer: {
-    alignItems: 'center', 
-    marginBottom: 20, 
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
   },
 });
-
-export default RegisScreen;
+  

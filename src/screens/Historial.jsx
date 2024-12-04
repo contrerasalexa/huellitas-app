@@ -1,30 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Alert } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../utils/firebase'; 
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../utils/firebase';
 
 export default function Historial() {
   const [citas, setCitas] = useState([]);
-  const [loading, setLoading] = useState(true); 
-
-  // obtener citas finalizadas
-  const fetchCitasFinalizadas = async () => {
-    try {
-      const citasSnapshot = await getDocs(collection(db, 'cuidados'));
-      const citasFinalizadas = citasSnapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .filter((cita) => cita.estado === 'Finalizado'); 
-
-      setCitas(citasFinalizadas);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error al cargar las citas:', error);
-      Alert.alert('Error', 'No se pudieron cargar las citas finalizadas.');
-    }
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCitasFinalizadas();
+    const citasQuery = query(
+      collection(db, 'cuidados'),
+      where('estado', '==', 'Finalizado') // Filtrar solo las citas finalizadas
+    );
+
+    const unsubscribe = onSnapshot(
+      citasQuery,
+      (snapshot) => {
+        const citasFinalizadas = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCitas(citasFinalizadas);
+        setLoading(false);
+      },
+      (error) => {
+        console.error('Error al escuchar los cambios en tiempo real:', error);
+        Alert.alert('Error', 'No se pudieron cargar las citas finalizadas.');
+        setLoading(false);
+      }
+    );
+
+    // Limpiar la suscripción al desmontar el componente
+    return () => unsubscribe();
   }, []);
 
   const renderCita = ({ item }) => (
@@ -81,7 +88,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   card: {
-    backgroundColor: '#D4EDDA', 
+    backgroundColor: '#D4EDDA',
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,

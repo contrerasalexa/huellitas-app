@@ -13,9 +13,8 @@ export default function Agenda() {
       const citasSnapshot = await getDocs(collection(db, 'citas'));
       const citas = citasSnapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() })) 
-        .filter((cita) => cita.estado === 'Pendiente'); // Filtrar solo las citas pendientes
-
-      //obtener la información de la mascota relacionada
+        .filter((cita) => cita.estado === 'Pendiente'); 
+        
       const dataCombinada = await Promise.all(
         citas.map(async (cita) => {
           const mascotaRef = doc(db, 'mascotas', cita.mascotaId); 

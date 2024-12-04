@@ -29,7 +29,7 @@ export default function RegisterScreen({ navigation }) {
   
       const userData = {
         email,
-        role: role === 'DUENIO' ? 'PASEADOR' : 'PASEADOR', // Siempre se guarda como 'PASEADOR'
+        role: role === 'DUENIO' ? 'DUENIO' : 'PASEADOR', // Siempre se guarda como 'PASEADOR'
         name,
         lastName,
         birthDate: birthDate.toISOString().split('T')[0], // Formato de fecha: YYYY-MM-DD
