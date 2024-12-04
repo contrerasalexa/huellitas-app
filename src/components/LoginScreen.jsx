@@ -22,10 +22,9 @@ export default function LoginScreen({ navigation }) {
         // Redirigir según el rol
         if (userRole === 'PASEADOR') {
           navigation.navigate('BottomTabs'); // Redirigir al menú del paseador
-        } else if(userRole === 'DUENIO') {
-          navigation.navigate('Dueño'); // Redirigir al menú del paseador
-        }
-         else {
+        } else if (userRole === 'DUENIO') {
+          navigation.navigate('Dueño'); // Redirigir al menú del dueño
+        } else {
           alert('Rol no reconocido. Comuníquese con el administrador.');
         }
       } else {
@@ -57,8 +56,12 @@ export default function LoginScreen({ navigation }) {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Ingresar" onPress={handleLogin} />
-      <Button title="Registrarse" onPress={() => navigation.navigate('Register')} />
+      <View style={styles.buttonContainer}>
+        <Button title="Ingresar" onPress={handleLogin} />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button title="Registrarse" onPress={() => navigation.navigate('Register')} />
+      </View>
     </View>
   );
 }
@@ -84,8 +87,11 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: '50%',
+    height: '40%',
     marginBottom: 10,
     alignSelf: 'center',
+  },
+  buttonContainer: {
+    marginBottom: 15, // Espaciado entre los botones
   },
 });

@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: 'blue',
     textAlign: 'center',
+    marginTop:30,
     marginBottom: 20,
   },
   loading: {
@@ -138,7 +139,9 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 250,
+    height: '70%',
     backgroundColor: '#fff',
+    marginTop:30,
     borderRadius: 10,
     marginRight: 15,
     padding: 15,
