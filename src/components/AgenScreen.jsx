@@ -55,33 +55,41 @@ function AgenScreen() {
     const { fecha, hora } = formData;
 
     if (!fecha || !hora) {
-      Alert.alert('Error', 'Por favor, completa todos los campos.');
-      return;
+        Alert.alert('Error', 'Por favor, completa todos los campos.');
+        return;
     }
 
     try {
-      await addDoc(collection(db, 'citas'), {
-        mascotaId: selectedMascota.id,
-        mascotaNombre: selectedMascota.nombre,
-        fecha,
-        hora,
-        estado: 'Pendiente', 
-        fechaRegistro: new Date(),
-      });
+        const userId = auth.currentUser?.uid;
+        if (!userId) {
+            Alert.alert('Error', 'Usuario no autenticado.');
+            return;
+        }
 
-      Alert.alert('Éxito', `Cita agendada para ${selectedMascota.nombre}.`);
-      setSelectedMascota(null);
-      setFormData({ fecha: '', hora: '' });
+        await addDoc(collection(db, 'citas'), {
+            mascotaId: selectedMascota.id,
+            mascotaNombre: selectedMascota.nombre,
+            fecha,
+            hora,
+            estado: 'Pendiente',
+            fechaRegistro: new Date(),
+            duenioId: userId,
+        });
+
+        Alert.alert('Éxito', `Cita agendada para ${selectedMascota.nombre}.`);
+        setSelectedMascota(null);
+        setFormData({ fecha: '', hora: '' });
     } catch (error) {
-      console.error('Error al guardar la cita:', error);
-      Alert.alert('Error', 'No se pudo guardar la cita.');
+        console.error('Error al guardar la cita:', error);
+        Alert.alert('Error', 'No se pudo guardar la cita.');
     }
-  };
+};
+
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
-      const formattedDate = selectedDate.toLocaleDateString(); // Formato dd/mm/yyyy
+      const formattedDate = selectedDate.toLocaleDateString(); 
       handleChange('fecha', formattedDate);
     }
   };

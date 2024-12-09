@@ -48,33 +48,35 @@ export default function Agenda() {
 
   const handleSolicitud = async (item) => {
     if (!currentUser) {
-      Alert.alert('Error', 'No se pudo identificar al usuario en sesión.');
-      return;
+        Alert.alert('Error', 'No se pudo identificar al usuario en sesión.');
+        return;
     }
 
     try {
-      const citaRef = doc(db, 'citas', item.id);
-      await updateDoc(citaRef, { estado: 'Iniciar' });
+        const citaRef = doc(db, 'citas', item.id);
+        await updateDoc(citaRef, { estado: 'Iniciar' });
 
-      const cuidado = {
-        mascotaId: item.mascotaId, 
-        mascotaNombre: item.nombre, 
-        fecha: item.fecha, 
-        hora: item.hora, 
-        estado: 'Pendiente', 
-        horaInicio: '',
-        horaFin: '', 
-        usuarioId: currentUser.uid, 
-      };
+        const cuidado = {
+            mascotaId: item.mascotaId, 
+            mascotaNombre: item.nombre, 
+            fecha: item.fecha, 
+            hora: item.hora, 
+            estado: 'Pendiente', 
+            horaInicio: '',
+            horaFin: '', 
+            usuarioId: currentUser.uid, 
+            citaId: item.id,
+        };
 
-      await addDoc(collection(db, 'cuidados'), cuidado); // Agregar el documento
-      Alert.alert('Solicitud Registrada', `El cuidado de ${item.nombre} ha sido registrado.`);
-      fetchCitasConMascotas(); 
+        await addDoc(collection(db, 'cuidados'), cuidado);
+        Alert.alert('Solicitud Registrada', `El cuidado de ${item.nombre} ha sido registrado.`);
+        fetchCitasConMascotas();
     } catch (error) {
-      console.error('Error al registrar el cuidado:', error);
-      Alert.alert('Error', 'No se pudo registrar el cuidado.');
+        console.error('Error al registrar el cuidado:', error);
+        Alert.alert('Error', 'No se pudo registrar el cuidado.');
     }
-  };
+};
+
 
   const renderCard = ({ item }) => (
     <View style={styles.card}>
